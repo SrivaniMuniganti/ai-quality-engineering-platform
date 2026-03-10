@@ -1,3 +1,7 @@
+Author: Srivani Muniganti
+
+This repository demonstrates an AI Quality Engineering Platform built by Srivani Muniganti.
+
 # AI Quality Engineering Platform
 
 An AI-powered quality engineering platform that automates the full QA lifecycle — from ingesting requirements to generating Playwright test scripts, executing them, analyzing failures, and self-healing broken locators using LLM suggestions.
