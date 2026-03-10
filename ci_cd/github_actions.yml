@@ -1,0 +1,189 @@
+name: AI QE Platform CI/CD
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+env:
+  PYTHON_VERSION: "3.11"
+
+jobs:
+  install:
+    name: Install Dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+
+      - name: Install Playwright browsers
+        run: playwright install chromium --with-deps
+
+  generate_tests:
+    name: Generate Tests via AI Pipeline
+    runs-on: ubuntu-latest
+    needs: install
+    env:
+      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+      AI_PROVIDER: groq
+      PLATFORM_USERNAME: admin
+      PLATFORM_PASSWORD: ${{ secrets.PLATFORM_PASSWORD }}
+      HEADLESS_BROWSER: "true"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          playwright install chromium --with-deps
+
+      - name: Set up .env
+        run: |
+          cp .env.example .env
+          echo "GROQ_API_KEY=${{ secrets.GROQ_API_KEY }}" >> .env
+          echo "AI_PROVIDER=groq" >> .env
+          echo "PLATFORM_USERNAME=admin" >> .env
+          echo "PLATFORM_PASSWORD=${{ secrets.PLATFORM_PASSWORD }}" >> .env
+          echo "HEADLESS_BROWSER=true" >> .env
+
+      - name: Seed requirements and run pipeline
+        run: |
+          python -c "
+          from core.database import init_db
+          init_db()
+          from services.requirement_service import seed_default_requirements
+          reqs = seed_default_requirements()
+          print(f'Seeded {len(reqs)} requirements')
+          from services.testcase_service import generate_test_cases
+          from services.script_service import generate_script
+          import json
+          for req in reqs[:3]:
+              tcs = generate_test_cases(req['id'])
+              for tc in tcs[:1]:
+                  s = generate_script(tc['id'])
+                  print(f'Generated script: {s.get(\"title\")}')
+          "
+
+      - name: Upload generated tests
+        uses: actions/upload-artifact@v4
+        with:
+          name: generated-tests
+          path: generated_tests/
+
+  execute_tests:
+    name: Execute Playwright Tests
+    runs-on: ubuntu-latest
+    needs: generate_tests
+    env:
+      HEADLESS_BROWSER: "true"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          playwright install chromium --with-deps
+
+      - name: Download generated tests
+        uses: actions/download-artifact@v4
+        with:
+          name: generated-tests
+          path: generated_tests/
+
+      - name: Run tests with JSON report
+        run: |
+          mkdir -p reports
+          pytest generated_tests/ -v --tb=short \
+            --html=reports/report.html --self-contained-html \
+            --json-report --json-report-file=reports/test_results.json \
+            || true
+
+      - name: Upload test reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: reports/
+
+  analyze_failures:
+    name: Analyze Test Failures
+    runs-on: ubuntu-latest
+    needs: execute_tests
+    env:
+      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+      AI_PROVIDER: groq
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Download test reports
+        uses: actions/download-artifact@v4
+        with:
+          name: test-reports
+          path: reports/
+
+      - name: Parse and log failures
+        run: |
+          python -c "
+          import json, os
+          report_path = 'reports/test_results.json'
+          if os.path.exists(report_path):
+              with open(report_path) as f:
+                  data = json.load(f)
+              summary = data.get('summary', {})
+              print(f'Tests: {summary}')
+              for test in data.get('tests', []):
+                  if test.get('outcome') == 'failed':
+                      print(f'FAILED: {test[\"nodeid\"]}')
+          else:
+              print('No JSON report found')
+          "
+
+  publish_reports:
+    name: Publish Reports
+    runs-on: ubuntu-latest
+    needs: [execute_tests, analyze_failures]
+    if: always()
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: all-artifacts/
+
+      - name: List artifacts
+        run: find all-artifacts/ -type f | sort
+
+      - name: Upload combined artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: full-platform-report
+          path: all-artifacts/
+          retention-days: 30

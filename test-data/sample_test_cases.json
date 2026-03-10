@@ -1,0 +1,143 @@
+[
+  {
+    "id": "TC-001",
+    "title": "Verify valid login with standard_user",
+    "steps": [
+      "Navigate to https://www.saucedemo.com",
+      "Enter 'standard_user' in the username field",
+      "Enter 'secret_sauce' in the password field",
+      "Click the Login button"
+    ],
+    "expected_result": "User is redirected to /inventory.html and products page is displayed",
+    "priority": "High",
+    "risk_level": "High",
+    "test_type": "Functional"
+  },
+  {
+    "id": "TC-002",
+    "title": "Verify error message for invalid credentials",
+    "steps": [
+      "Navigate to https://www.saucedemo.com",
+      "Enter 'invalid_user' in username",
+      "Enter 'wrongpass' in password",
+      "Click the Login button"
+    ],
+    "expected_result": "Error message 'Username and password do not match' is displayed",
+    "priority": "High",
+    "risk_level": "High",
+    "test_type": "Negative"
+  },
+  {
+    "id": "TC-003",
+    "title": "Verify locked-out user cannot login",
+    "steps": [
+      "Navigate to https://www.saucedemo.com",
+      "Enter 'locked_out_user' in username",
+      "Enter 'secret_sauce' in password",
+      "Click the Login button"
+    ],
+    "expected_result": "Error message references 'locked out' account",
+    "priority": "Medium",
+    "risk_level": "Medium",
+    "test_type": "Negative"
+  },
+  {
+    "id": "TC-004",
+    "title": "Verify products inventory page displays 6 items",
+    "steps": [
+      "Login as standard_user",
+      "Count the number of product cards on the inventory page"
+    ],
+    "expected_result": "Exactly 6 product cards are visible, each with name, price, and Add to Cart button",
+    "priority": "High",
+    "risk_level": "High",
+    "test_type": "Functional"
+  },
+  {
+    "id": "TC-005",
+    "title": "Verify add to cart increments badge",
+    "steps": [
+      "Login as standard_user",
+      "Click 'Add to cart' on the first product",
+      "Check the cart badge count"
+    ],
+    "expected_result": "Cart badge shows '1'",
+    "priority": "High",
+    "risk_level": "High",
+    "test_type": "Functional"
+  },
+  {
+    "id": "TC-006",
+    "title": "Verify product sort by price low to high",
+    "steps": [
+      "Login as standard_user",
+      "Open the sort dropdown",
+      "Select 'Price (low to high)'",
+      "Check the price of the first and last product"
+    ],
+    "expected_result": "First product has the lowest price; products are in ascending price order",
+    "priority": "Medium",
+    "risk_level": "Low",
+    "test_type": "Functional"
+  },
+  {
+    "id": "TC-007",
+    "title": "Verify checkout completes successfully",
+    "steps": [
+      "Login as standard_user",
+      "Add any product to cart",
+      "Click the cart icon",
+      "Click Checkout",
+      "Enter first name 'Test', last name 'User', zip '12345'",
+      "Click Continue",
+      "Click Finish"
+    ],
+    "expected_result": "Confirmation page shows 'Thank you for your order!'",
+    "priority": "High",
+    "risk_level": "High",
+    "test_type": "E2E"
+  },
+  {
+    "id": "TC-008",
+    "title": "Verify checkout validation for missing first name",
+    "steps": [
+      "Login as standard_user",
+      "Add a product to cart and proceed to checkout",
+      "Leave first name blank",
+      "Enter last name and zip",
+      "Click Continue"
+    ],
+    "expected_result": "Error message 'First Name is required' is displayed",
+    "priority": "Medium",
+    "risk_level": "Medium",
+    "test_type": "Negative"
+  },
+  {
+    "id": "TC-009",
+    "title": "Verify logout redirects to login page",
+    "steps": [
+      "Login as standard_user",
+      "Open the hamburger menu",
+      "Click Logout"
+    ],
+    "expected_result": "User is redirected to the login page at https://www.saucedemo.com/",
+    "priority": "Medium",
+    "risk_level": "Medium",
+    "test_type": "Functional"
+  },
+  {
+    "id": "TC-010",
+    "title": "Verify cart item removal decrements badge",
+    "steps": [
+      "Login as standard_user",
+      "Add two products to cart",
+      "Click the cart icon",
+      "Remove one item",
+      "Check the cart badge count"
+    ],
+    "expected_result": "Cart badge shows '1' after removing one of two items",
+    "priority": "Medium",
+    "risk_level": "Medium",
+    "test_type": "Functional"
+  }
+]

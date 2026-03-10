@@ -1,0 +1,58 @@
+[
+  {
+    "id": 1,
+    "script_id": 1,
+    "test_name": "test_valid_login_with_correct_credentials",
+    "feature": "Login",
+    "status": "passed",
+    "duration_seconds": 3.21,
+    "started_at": "2026-03-09T10:00:00Z",
+    "completed_at": "2026-03-09T10:00:03Z",
+    "output": "PASSED test_valid_login_with_correct_credentials - 3.21s"
+  },
+  {
+    "id": 2,
+    "script_id": 2,
+    "test_name": "test_invalid_login_error_message",
+    "feature": "Login",
+    "status": "passed",
+    "duration_seconds": 2.85,
+    "started_at": "2026-03-09T10:01:00Z",
+    "completed_at": "2026-03-09T10:01:03Z",
+    "output": "PASSED test_invalid_login_error_message - 2.85s"
+  },
+  {
+    "id": 3,
+    "script_id": 3,
+    "test_name": "test_product_display",
+    "feature": "Inventory",
+    "status": "failed",
+    "duration_seconds": 5.12,
+    "started_at": "2026-03-09T10:02:00Z",
+    "completed_at": "2026-03-09T10:02:05Z",
+    "error_message": "TimeoutError: page.locator('.inventory_item').count() timed out after 30000ms",
+    "output": "FAILED test_product_display - TimeoutError waiting for selector"
+  },
+  {
+    "id": 4,
+    "script_id": 4,
+    "test_name": "test_add_to_cart",
+    "feature": "Cart",
+    "status": "passed",
+    "duration_seconds": 4.44,
+    "started_at": "2026-03-09T10:03:00Z",
+    "completed_at": "2026-03-09T10:03:04Z",
+    "output": "PASSED test_add_to_cart - 4.44s"
+  },
+  {
+    "id": 5,
+    "script_id": 5,
+    "test_name": "test_checkout_e2e",
+    "feature": "Checkout",
+    "status": "passed",
+    "duration_seconds": 8.67,
+    "started_at": "2026-03-09T10:04:00Z",
+    "completed_at": "2026-03-09T10:04:09Z",
+    "output": "PASSED test_checkout_e2e - 8.67s"
+  }
+]

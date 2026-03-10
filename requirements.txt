@@ -1,0 +1,26 @@
+# AI / LangChain
+langchain==0.3.25
+langchain-core==0.3.59
+langchain-groq==0.2.4
+langchain-anthropic==0.2.4
+langchain-google-genai==2.0.7
+langchain-ollama==0.2.3
+
+# Streamlit UI
+streamlit==1.42.0
+plotly==5.24.1
+
+# Database
+sqlalchemy==2.0.35
+# Config / Validation
+pydantic==2.9.2
+pydantic-settings==2.6.1
+python-dotenv==1.0.1
+truststore>=0.9.1  # corporate SSL proxy support (Windows cert store)
+
+# Testing / Automation
+playwright==1.49.1
+pytest==8.3.3
+pytest-html==4.1.1
+allure-pytest>=2.13.2
+pytest-json-report>=1.5.0

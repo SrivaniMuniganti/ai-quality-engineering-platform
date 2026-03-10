@@ -1,0 +1,19 @@
+# SauceDemo Sample Requirements
+# 15 requirements for AI parsing / seeding
+# Each line is a standalone requirement description.
+
+1. Users must be able to log in with standard_user / secret_sauce credentials and see the products inventory page.
+2. Users who enter incorrect credentials must see an error message stating credentials do not match.
+3. Locked-out users must see a specific error message mentioning their account is locked.
+4. The products inventory page must display exactly 6 products, each with a name, price, description, and image.
+5. Users can sort products by name A-Z, Z-A, price low-to-high, and price high-to-low.
+6. Clicking "Add to cart" on a product must increment the shopping cart badge counter by 1.
+7. Users can add multiple products to the cart and the badge counter must reflect the total count.
+8. The cart page must list all added items with their names and prices.
+9. Users can remove items from the cart; the badge must decrement or disappear accordingly.
+10. The checkout flow requires first name, last name, and zip code; missing fields show validation errors.
+11. On checkout step 2, the displayed total must equal item subtotal plus tax.
+12. Completing checkout must show the confirmation message "Thank you for your order!".
+13. After logout, users are redirected to the login page and cannot access protected pages via browser back.
+14. The hamburger menu provides access to All Items, About, Logout, and Reset App State options.
+15. Clicking "Reset App State" clears all cart items and resets the application to its default state.
